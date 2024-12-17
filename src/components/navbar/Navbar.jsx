@@ -5,11 +5,22 @@ import { BsFillCloudSunFill } from 'react-icons/bs'
 import { FiSun } from 'react-icons/fi'
 import { RxCross2 } from 'react-icons/rx'
 import context from '../../context/MyContext'
+import { toast } from 'react-toastify'
 export default function Navbar() {
   const [open, setOpen] = useState(false)
 
   const {mode,toggleMode}=useContext(context)
 
+  const Logout =()=>{
+    localStorage.removeItem('user')
+    window.location.href="/login"
+    toast.success("Logout successfully!")
+  }
+
+  const user=JSON.parse(localStorage.getItem('user'))
+  console.log(user);
+  
+  
   return (
     <div className="bg-white sticky top-0 z-50  "  >
       {/* Mobile menu */}
@@ -132,16 +143,26 @@ export default function Navbar() {
                   <Link to={'/allproducts'} className="text-sm font-medium text-gray-700 " style={{ color: mode === 'dark' ? 'white' : '', }}>
                     All Products
                   </Link>
-                  <Link to={'/order'} className="text-sm font-medium text-gray-700 " style={{ color: mode === 'dark' ? 'white' : '', }}>
+                  {user ? <Link to={'/order'} className="text-sm font-medium text-gray-700 " style={{ color: mode === 'dark' ? 'white' : '', }}>
                     Order
-                  </Link>
-                  <Link to={'/dashboard'} className="text-sm font-medium text-gray-700 " style={{ color: mode === 'dark' ? 'white' : '', }}>
+                  </Link> : ""}
+                  
+                  {user?.user?.email === "rb8329563@gmail.com" ? <Link to={'/dashboard'} className="text-sm font-medium text-gray-700 " style={{ color: mode === 'dark' ? 'white' : '', }}>
                     Admin
-                  </Link>
-
-                  <a className="text-sm font-medium text-gray-700 cursor-pointer  " style={{ color: mode === 'dark' ? 'white' : '', }}>
+                  </Link> : ""}
+                  
+                  {user ? <a 
+                  onClick={Logout}
+                  className="text-sm font-medium text-gray-700 cursor-pointer  " style={{ color: mode === 'dark' ? 'white' : '', }}>
                     Logout
-                  </a>
+                  </a> :
+                  <Link to={'/login'}>
+                  <a 
+                  className="text-sm font-medium text-gray-700 cursor-pointer  " style={{ color: mode === 'dark' ? 'white' : '', }}>
+                    LogIn/Signup
+                  </a> 
+                  </Link>}
+                  
                 </div>
 
                 <div className="hidden lg:ml-8 lg:flex">

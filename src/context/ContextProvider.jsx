@@ -1,5 +1,8 @@
 import React, { useState } from 'react'
 import context from './MyContext'
+import { addDoc, collection, Timestamp } from 'firebase/firestore'
+import { toast } from 'react-toastify'
+import { fireDB } from '../firebase/FireBaseConfig'
 
 function ContextProvider({children}) {
 
@@ -17,6 +20,44 @@ function ContextProvider({children}) {
 
 
    const [loading,setLoading]=useState(false)
+
+
+   const [productDesc,setProductDesc]=useState({
+    title:null,
+    price:null,
+    imageURL:null,
+    category:null,
+    description:null,
+    time:Timestamp.now(),
+    date:new Date().toLocaleString(
+      "en-US",
+      {
+        month:"short",
+        day:"2-digit",
+        year:"numeric",
+      }
+    )
+   })
+
+   const addProduct= async ()=>{
+    if(productDesc.category==null || productDesc.price==null || productDesc.imageURL==null || productDesc.category == null ||  productDesc.description == null){
+      return toast.error("All Feilds Are Required!!")
+    }
+    setLoading(true)
+    try {
+      const productRef =collection(fireDB,"products")
+      await addDoc(productRef,productDesc)
+      toast.success("Product Added Successfully !")
+      setLoading(false)
+    } catch (error) {
+      console.log(error);
+      toast.error(error)
+      setLoading(false)
+    }
+   }
+
+   const [product,setProduct]=useState([])
+   
   return (
     <context.Provider value={{mode,toggleMode,loading,setLoading}}>
         {children}

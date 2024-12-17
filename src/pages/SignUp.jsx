@@ -4,19 +4,24 @@ import {toast} from 'react-toastify'
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth ,fireDB } from "../firebase/FireBaseConfig";
 import { addDoc, collection, Timestamp } from "firebase/firestore";
+import Loader from "../components/loader/Loader";
+import { useContext } from "react";
+import context from "../context/MyContext";
 
 function Signup() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const {loading,setLoading}=useContext(context)
+
   const signup=async ()=>{
     if(username==="" | email==="" | password===""){
         return toast.error("all feilds must be filled correctly")
     }
     try {
+      setLoading(true)
       const users= await createUserWithEmailAndPassword(auth,email,password)
-      console.log(users);
       const user ={
         name:username,
         email:email,
@@ -29,13 +34,15 @@ function Signup() {
       setEmail("")
       setPassword("")
       setUsername("")
+      setLoading(false)
     } catch (error) {
       console.log(error);
-    }
-
+      setLoading(false)
+    } 
   }
   return (
     <div className=" flex justify-center items-center h-screen">
+      {loading && <Loader/>}
       <div className=" bg-gray-800 px-10 py-10 rounded-xl ">
         <div className="">
           <h1 className="text-center text-white text-xl mb-4 font-bold">
